@@ -1,0 +1,8 @@
+auth.py
+*.pyc
+
+#PICTURES
+.png
+
+#OLD FILES
+.save
