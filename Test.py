@@ -9,6 +9,9 @@ import json
 import Project as pro
 from random import randint
 import hashlib
+from aux import iprint
+
+
 
 
 
@@ -23,27 +26,27 @@ def test_data():
 		p = pro.Project(hashlib.md5(str(i)).hexdigest(), "sercliff", num_files, num_users)
 		project.append(p)
 
-	print ("\nPROJECT\n------------------")
+	iprint ("\nPROJECT\n------------------")
 
 	for p in project:
-		print ("Project_id: "+str(p.get_project_id()))
-		print ("Owner: "+str(p.get_owner_id()))
-		print ("\n**** USERS ****")
+		iprint ("Project_id: "+str(p.get_project_id()))
+		iprint ("Owner: "+str(p.get_owner_id()))
+		iprint ("\n**** USERS ****")
 		for k, user in p.get_users().items():
-			print ("User_id: "+str(k))
-			print ("Name: "+str(user.get_name()))
-			print ("Platform: "+str(user.get_platform()))
-			print("--")
-		print ("\n**** FILES *****")
+			iprint ("User_id: "+str(k))
+			iprint ("Name: "+str(user.get_name()))
+			iprint ("Platform: "+str(user.get_platform()))
+			iprint("--")
+		iprint ("\n**** FILES *****")
 		for k, file in p.get_files().items():
-			print ("\nFILE: "+str(k))
-			print ("Path: "+str(file.get_path()))
+			iprint ("\nFILE: "+str(k))
+			iprint ("Path: "+str(file.get_path()))
 			for row, data in file.get_data().items():
-				print (str(row)+" - "+data.get_text())	
-		print ("\n------------------\n")
+				iprint (str(row)+" - "+data.get_text())	
+		iprint ("\n------------------\n")
 
 
-	print ("FINALIZADO\n\n")
+	iprint ("FINALIZADO\n\n")
 	return project
 
 

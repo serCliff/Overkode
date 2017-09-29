@@ -5,6 +5,11 @@
 
 import auth
 import pyrebase
+import json
+import Test
+import Project
+import ProjectController
+from aux import iprint
 
 
 def stream_handler(message):
@@ -33,6 +38,16 @@ def main():
 	db = firebase.database()
 
 
+	data = ProjectController.project_to_json(Test.test_data())
+	print ""
+	# print data
+	decoded = json.loads(data)
+#TODO: Crear metodo que guarde todo correctamente en la base de datos
+	for k, v in decoded.items():
+		print k
+		print v
+		print 
+	# db.set(data)
 	# data = [{"name": "Mortimer 'Morty' Smith", "auth": "asdasdasdas"}, {"name": "'Morty' Smith", "auth": "asdasdasdas"}, {"name": "Mortimer 'Morty'", "auth": "asdasdasdas"}]
 	# db.child("users").child("Morty").set(data)
 
@@ -48,7 +63,7 @@ def main():
 
 
 
-	my_stream = db.child("users").stream(stream_handler)
+	# my_stream = db.child("users").stream(stream_handler)
 
 
 
