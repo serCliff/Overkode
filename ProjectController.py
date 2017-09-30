@@ -57,8 +57,10 @@ class ProjectController:
 
 def project_to_json(project):
 
-	""" Change project created on classes to JSON to be saved """
-	## No sirve para introducir todo correctamente, posible creación de un sistema de metodos que guarden cosas concretas
+	""" Change project created on classes to JSON to be saved 
+		-> Return a jason with all elements of project
+	"""
+	
 	
 	#TODO: project_to_json
 	iprint (DEBUG.PRINT, "***************************")
