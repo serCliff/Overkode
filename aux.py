@@ -11,12 +11,34 @@ from random import randint
 import hashlib
 
 
+class DEBUG(Enum):
+	ALL = 1 
+	ERROR = 2 
+	WARNING = 3 
+	PRINT = 4 
+	NONE = 5 
+
+
+
 log = 1
 
-def iprint(text):
+
+def iprint(debug, text):
 	global log
-	if log == 0:
+
+	if debug == DEBUG.ERROR:
 		print (decode(text))
+	
+	elif debug == DEBUG.WARNING:
+		print (decode(text))
+	
+	elif debug == DEBUG.ALL:
+		print (decode(text))
+	
+	elif debug == DEBUG.PRINT:
+		if log == 0:
+			print (decode(text))
+
 
 
 def decode(text):
@@ -36,3 +58,7 @@ def decode(text):
 	text = text.replace("\'", "\"")
 	return text
 
+
+def set_log(value):
+	global log
+	log = value

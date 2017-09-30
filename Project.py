@@ -28,27 +28,26 @@ class Permissions(Enum):
 
 class Project:
 
-	def __init__(self, project_id, permissions, link, owner, files, users):
+	def __init__(self, project_id, permissions, link, owner_id, files, users):
 		self.project_id = project_id
 		self.permissions = permissions
 		self.link = link
-		self.owner = owner
+		self.owner_id = owner_id
 		self.files = files
 		self.users = users
 
 	## SAMPLE CREATOR ##
-	def __init__(self, project_id, owner_id, num_files, num_users):
-		owner_id = str(owner_id)
+	def __init__(self, project_id, owner, num_files, num_users):
+		
 		self.project_id = project_id
 		self.permissions = randint(1, 4)
-		self.link = "http://sergiodelcastillo.com/"+owner_id
-		self.owner_id = owner_id
+		self.link = "http://sergiodelcastillo.com/"+project_id
+		self.owner_id = str(hashlib.md5(str(owner)).hexdigest())
 		self.files = dict()
 		self.users = dict()
 		
-		user_id = hashlib.md5(owner_id).hexdigest()
-		u = User(user_id, owner_id, "sublime")
-		self.users[user_id] = u
+		u = User(self.owner_id, owner, "sublime")
+		self.users[self.owner_id] = u
 
 		for user in xrange(1, num_users):
 			user_id = hashlib.md5(str(user)).hexdigest()

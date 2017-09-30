@@ -5,26 +5,19 @@
 
 import auth
 import pyrebase
+import sys
 import json
 import Test
 import Project
 import ProjectController
+import DataController
 from aux import iprint
+from aux import DEBUG
+from aux import set_log as log
 
 
 def stream_handler(message):
-
 	print message
-	# print(message[1])
-	# print(message[1][0]["name"])
-	# print(message[1][1]["name"])
-
-	# val = message.val().popitem()
-	# print(val) # users
-	# print(val[0]) # users
-	# print(val[1]) # users
-	# print(val[1][0]["name"]) # users
-	# print(val[1][1]["name"]) # users
 
 
 
@@ -32,35 +25,21 @@ def stream_handler(message):
 
 def main():
 
+	if sys.argv[len(sys.argv)-1] == "debug":
+		log(0)
 
 	firebase = pyrebase.initialize_app(auth.config())
 
 	db = firebase.database()
 
-
+	## Make random data
 	data = ProjectController.project_to_json(Test.test_data())
-	print ""
-	# print data
+
+	## decode the data
 	decoded = json.loads(data)
-#TODO: Crear metodo que guarde todo correctamente en la base de datos
-	for k, v in decoded.items():
-		print k
-		print v
-		print 
-	# db.set(data)
-	# data = [{"name": "Mortimer 'Morty' Smith", "auth": "asdasdasdas"}, {"name": "'Morty' Smith", "auth": "asdasdasdas"}, {"name": "Mortimer 'Morty'", "auth": "asdasdasdas"}]
-	# db.child("users").child("Morty").set(data)
-
-
-	# user = db.child("users").get()
-
-	# val = user.val().popitem()
-	# print(val) # users
-	# print(val[0]) # users
-	# print(val[1]) # users
-	# print(val[1][0]["name"]) # users
-	# print(val[1][1]["name"]) # users
-
+ 	
+ 	## Save random data
+	DataController.save_project("owner", decoded)
 
 
 	# my_stream = db.child("users").stream(stream_handler)
@@ -69,3 +48,22 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

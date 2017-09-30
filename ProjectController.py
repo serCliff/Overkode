@@ -12,6 +12,8 @@ import time
 import json
 import Project
 from aux import iprint
+from aux import DEBUG
+from aux import set_log as log
 
 
 
@@ -26,36 +28,41 @@ class ProjectController:
 
 	def new_project(owner, platform):
 		#TODO: new_project
-		iprint ("something")
+		iprint (DEBUG.PRINT, "something")
 
 	def selected_text(owner, permissions):
 		#TODO: selected_text
-		iprint ("something")
+		iprint (DEBUG.PRINT, "something")
 
 	def read_current_directory():
 		#TODO: read_current_directory
-		iprint ("something")
+		iprint (DEBUG.PRINT, "something")
 
 	def change_permissions(permissions):
 		#TODO: change_permissions
-		iprint ("something")
+		iprint (DEBUG.PRINT, "something")
 
 	def show_project_id():
 		#TODO: show_project_id
-		iprint ("something")
+		iprint (DEBUG.PRINT, "something")
 
 	def add_collaborator(user):
 		#TODO: add_collaborator
-		iprint ("something")
+		iprint (DEBUG.PRINT, "something")
 
 	def file_to_project(file):
 		#TODO: file_to_project
-		iprint ("something")
+		iprint (DEBUG.PRINT, "something")
 
 
 def project_to_json(project):
+
+	""" Change project created on classes to JSON to be saved """
+	## No sirve para introducir todo correctamente, posible creación de un sistema de metodos que guarden cosas concretas
+	
 	#TODO: project_to_json
-	iprint ("iPRINTING DATA")
+	iprint (DEBUG.PRINT, "***************************")
+	iprint (DEBUG.PRINT, "PARSE PROJECT TO JSON\n")
 
 	projects = dict()
 
@@ -87,7 +94,7 @@ def project_to_json(project):
 			users[user_id]["name"] = user.get_name()
 			users[user_id]["platform"] = user.get_platform()
 			users[user_id]["user_id"] = user.get_user_id()
-		iprint ("")
+		# iprint (DEBUG.PRINT, "")
 
 		item = dict()
 		item["project"] = project_data
@@ -97,10 +104,11 @@ def project_to_json(project):
 
 		projects[project_data["id"]] = item
 
-	iprint (projects)
+	# iprint (DEBUG.PRINT, projects)
 	returned_data = json.dumps(projects)
 	data_string = json.dumps(projects, sort_keys=True, indent=4, separators=(',', ': '))
-	iprint ('JSON:'+ str(data_string))
+	
+	iprint (DEBUG.PRINT, 'JSON:'+ str(data_string))
 
 	return returned_data
 
