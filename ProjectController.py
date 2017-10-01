@@ -11,6 +11,8 @@ import pyrebase
 import time
 import json
 import Project
+import hashlib
+
 from aux import iprint
 from aux import DEBUG
 from aux import set_log as log
@@ -78,6 +80,8 @@ def project_to_json(project):
 		files = dict()
 		file_data = dict()
 		for name, file in p.get_files().items():
+			name = hashlib.md5(name).hexdigest()
+			
 			files[name] = dict()
 			files[name]["name"] = file.get_name()
 			files[name]["path"] = file.get_path()

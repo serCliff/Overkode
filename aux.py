@@ -27,7 +27,7 @@ def iprint(debug, text):
 	global log
 
 	if debug == DEBUG.ERROR:
-		print (decode(text))
+		print ("[ERROR]"+decode(text))
 	
 	elif debug == DEBUG.WARNING:
 		print (decode(text))

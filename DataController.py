@@ -6,8 +6,8 @@
 # FUTURE: Method of use of firebase
 # firebase = pyrebase.initialize_app(auth.config())
 # db = firebase.database()
-# db.child("users").set(data) ## To save data with a unique, auto-generated, timestamp-based key, use the push() method.
-# db.child("users").push(data) ## To create your own keys use the set() method. The key in the example below is "Morty".
+# db.child("users").child("Morty").set(data) ## To create your own keys use the set() method. The key in the example below is "Morty".
+# db.child("users").child("Morty").push(data) ## To save data with a unique, auto-generated, timestamp-based key, use the push() method.
 # db.child("users").update(data) ## To update data for an existing entry use the update() method.
 # db.child("users").remove(data) ## To delete data for an existing entry use the remove() method.
 
@@ -55,24 +55,29 @@ def create_random_link():
 
 	iprint (DEBUG.PRINT, "something")
 
-def save_project(owner, data):
+def save_project(data):
 	""" SAVE PROJECT """
 
 	iprint(DEBUG.WARNING, "SAVING DATA: "+ str(len(data)) +" projects")
+	# iprint(DEBUG.PRINT, "DATA: "+str(data))
 
 	for project_id, project in data.items():
 		
-		set_project_info(project_id, project['project'])
+		if 'project' in project:
+			set_project_info(project_id, project['project'])
 
-		for user_id, user_data in project['users'].items():
-			set_collaborator(project_id, user_data)
+		if 'users' in project:
+			for user_id, user_data in project['users'].items():
+				set_collaborator(project_id, user_data)
 
-		for file_name, files in project['files'].items():
-			set_files(project_id, files)
-		
-		for file_name, file_data in project['file_data'].items():
-			for row, info in file_data.items():
-				set_file_data(project_id, file_name, row, info)
+		if 'files' in project:
+			for file_name, files in project['files'].items():
+				set_files(project_id, files)
+			
+		if 'file_data' in project:
+			for file_name, file_data in project['file_data'].items():
+				for row, info in file_data.items():
+					set_file_data(project_id, file_name, row, info)
 		
 	iprint(DEBUG.WARNING, "SAVED")
 
@@ -99,7 +104,7 @@ def set_file_data(project_id, file_name, row, row_data):
 	""" Save row of file """
 	global db
 	try:
-		db.child(project_id).child("file_data").child(hashlib.md5(str(file_name)).hexdigest()).child(row).set(row_data)
+		db.child(project_id).child("file_data").child(str(file_name)).child(row).update(row_data)
 	except Exception as e:
 		iprint(DEBUG.ERROR, "[set_file_data]: Throw errors, exception: "+ str(e))
 
@@ -146,4 +151,28 @@ def set_permissions(project_id, permissions):
 def return_collaborators(project_id):
 	#TODO: return_collaborators
 	iprint (DEBUG.PRINT, "something")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
