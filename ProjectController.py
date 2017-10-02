@@ -30,35 +30,96 @@ class ProjectController:
 		self.data = data
 		self.platform = platform
 
-	def new_project(self, owner_id, platform):
-		#TODO: new_project
+	def new_project(self, scope, permissions):
+		""" 
+			MAKE A NEW PROJECT AND SAVE IN THE DATABASE 
+			scope       : Determine the range of work, Project or file, and where are all
+			permissions : Determine the permissions of all project (For partial sharing in selected_texy() method)
+			
+			-> Return   : Link/id of the project 
+		"""
+
 		
-		if platform != "web":
+		if self.platform != "web":
+
+			if scope['range'] == "project": ## We are sharing all our project
 			
-			current_directory = os.getcwd()+"/"
+				current_directory = os.getcwd()+"/"
 
-			all_files = glob.glob(current_directory+'**', recursive=True) ## This version retunr an iterator, glob.glob returns a list 
-			all_files.remove(os.getcwd()+"/")
-			
-			iprint (DEBUG.PRINT, current_directory)
+				all_files = glob.glob(current_directory+'**', recursive=True) ## This version retunr an iterator, glob.glob returns a list 
+				all_files.remove(os.getcwd()+"/")
+				
+				iprint (DEBUG.PRINT, current_directory)
 
-			iprint (DEBUG.PRINT, "\n|\t\tDIRECTORIES\r\t\t\t\t\t|\t\tDIRECTORY")
-			for file in all_files:
-				if os.path.isdir(file):
-					iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
+				iprint (DEBUG.PRINT, "\n|\t\tDIRECTORIES\r\t\t\t\t\t|\t\tDIRECTORY")
+				for file in all_files:
+					if os.path.isdir(file):
+						iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
+
+				iprint (DEBUG.PRINT, "\n|\t\tFILE\r\t\t\t\t\t|\t\tDIRECTORY")
+				for file in all_files:
+					if os.path.isfile(file):
+						iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
+
+			elif scope['range'] == "file": ## Only we will share the file with name is scope['file'] and it is in scope['path']
+				iprint(DEBUG.WARNING, scope['file'])
 					
-			iprint (DEBUG.PRINT, "\n|\t\tFILE\r\t\t\t\t\t|\t\tDIRECTORY")
-			for file in all_files:
-				if os.path.isfile(file):
-					iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
-					
-
-
 
 		else: 
 			iprint(DEBUG.PRINT, "With web platform create a new file of project and begin")
 		# print (all_data)
 
+
+	def create_project(self):
+		iprint (DEBUG.PRINT, "something")
+	def create_project_files(self):
+		iprint (DEBUG.PRINT, "something")
+	def create_project_rowInfo(self, file_path, permissions):
+		""" 
+			Make a RowInfo class with the information content in the file 
+			file_path   : The path of file that will be readed
+			permissions : dict[row, permission] with special permissions (if is empty all rows have Permissions.WRITE)
+			-> Return   : dict[row, RowInfo] filled with the file_path information
+		"""
+		iprint (DEBUG.WARNING, "CREATING PROJECT RowInfo to: "+str(file_path))
+
+		row_info = dict()
+		try:
+			timestamp = "00/00/0000"
+			
+			if len(permissions):
+				row_permissions = Project.Permissions.READ.value
+			else:
+				row_permissions = Project.Permissions.WRITE.value
+			
+			with open(file_path) as file:
+				row=1
+				for line in file:
+					row_info[row] = Project.RowInfo(line, row_permissions, timestamp)
+					row+=1
+			
+			try:
+				if len(permissions):
+					iprint(DEBUG.PRINT, "Rewrite rows with special permissions")
+					for row, permission in permissions.items():
+						row_info[row].set_permissions(permission)
+
+			except Exception as e:
+				iprint(DEBUG.ERROR, "[create_project_rowInfo] : Changing File Permissions was throwed an exception: "+str(e))
+		except Exception as e:
+			iprint(DEBUG.ERROR, "[create_project_rowInfo] : Reading File was throwed an exception: "+str(e))
+
+
+		iprint(DEBUG.WARNING, "RowInfo was done")
+
+		return row_info
+
+
+
+
+
+	def create_project_users(self):
+		iprint (DEBUG.PRINT, "something")
 
 
 	def selected_text(self, owner_id, permissions):

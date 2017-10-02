@@ -99,7 +99,10 @@ class Files:
 		return self.permissions
 	def get_data(self):
 		return self.data
+	def set_permissions(self, new_permission):
+		self.permissions = new_permission
 
+		
 class RowInfo:
 	def __init__(self, text, permissions, timestamp):
 		self.text = text
@@ -112,6 +115,8 @@ class RowInfo:
 		return self.permissions
 	def get_timestamp(self):
 		return self.timestamp
+	def set_permissions(self, new_permission):
+		self.permissions = new_permission
 
 class User:
 	def __init__(self, user_id, name, platform):

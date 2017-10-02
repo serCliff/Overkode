@@ -23,19 +23,19 @@ class DEBUG(Enum):
 log = 1
 
 
-def iprint(debug, text):
+def iprint(DEBUG, text):
 	global log
 
-	if debug == DEBUG.ERROR:
+	if DEBUG == DEBUG.ERROR:
 		print ("[ERROR]"+decode(text))
 	
-	elif debug == DEBUG.WARNING:
+	elif DEBUG == DEBUG.WARNING:
 		print (decode(text))
 	
-	elif debug == DEBUG.ALL:
+	elif DEBUG == DEBUG.ALL:
 		print (decode(text))
 	
-	elif debug == DEBUG.PRINT:
+	elif DEBUG == DEBUG.PRINT:
 		if log == 0:
 			print (decode(text))
 

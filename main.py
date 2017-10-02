@@ -63,17 +63,25 @@ def main():
 	# data = json.loads(json.dumps({"2994bf18db049b860b87943cd21b978c": {"file_data": {"c672c18b046f9c4be7f33e39f62bb942": {"20": {"permissions": 1,"text": "TEST UPDATE DATA","timestamp": "00/00/0000"}}}}}))
 	# DataController.update_project(data)
 
-	## TEST TO LIST CONTENT OF DIRECTORY
+	# ## TEST TO LIST CONTENT OF DIRECTORY
 	owner_id = "data"
 	collaborators = "data"
 	project_id = "data"
 	data = "data"
 	platform = "data"
 
-
 	pc = pr.ProjectController(owner_id, collaborators, project_id, data, platform)
-	pc.new_project(owner_id, platform)
+	# pc.new_project(owner_id, platform)
 
+	## TEST create_project_rowInfo()
+	permissions = dict()
+	for i in range(80, 101):
+		permissions[i] = Project.Permissions.WRITE.value
+
+	value = pc.create_project_rowInfo("/home/sergiodebian/Overkode/Test.py", permissions)
+	
+	for row, rowinfo in value.items():
+		print("["+str(row) + " : "+str(rowinfo.permissions)+"] " + str(rowinfo.text))
 
 	# ## STREAM
 	# my_stream = db.child("2994bf18db049b860b87943cd21b978c").stream(stream_handler)
