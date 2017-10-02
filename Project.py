@@ -49,16 +49,16 @@ class Project:
 		u = User(self.owner_id, owner, "sublime")
 		self.users[self.owner_id] = u
 
-		for user in xrange(1, num_users):
+		for user in range(1, num_users):
 			user_id = hashlib.md5(str(user)).hexdigest()
 			user = "sercliff_"+str(user)
 			u = User(user_id, user, "sublime")
 			self.users[user_id] = u
 
-		for file in xrange(1, num_files):
+		for file in range(1, num_files):
 			data = dict()
 
-			for row in xrange(1,20):
+			for row in range(1,20):
 				text = hashlib.sha384(str(row*file)).hexdigest()
 				permissions = randint(1, 3)
 				timestamp = "00/00/0000"

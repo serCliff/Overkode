@@ -12,6 +12,8 @@ import time
 import json
 import Project
 import hashlib
+import os
+import glob
 
 from aux import iprint
 from aux import DEBUG
@@ -21,38 +23,65 @@ from aux import set_log as log
 
 class ProjectController:
 
-	def __init__(owner, collaborators, project_id, data, platform):
-		self.owner = owner
+	def __init__(self, owner_id, collaborators, project_id, data, platform):
+		self.owner_id = owner_id
 		self.collaborators = collaborators
 		self.project_id = project_id
 		self.data = data
 		self.platform = platform
 
-	def new_project(owner, platform):
+	def new_project(self, owner_id, platform):
 		#TODO: new_project
-		iprint (DEBUG.PRINT, "something")
+		
+		if platform != "web":
+			
+			current_directory = os.getcwd()+"/"
 
-	def selected_text(owner, permissions):
+			all_files = glob.glob(current_directory+'**', recursive=True) ## This version retunr an iterator, glob.glob returns a list 
+			all_files.remove(os.getcwd()+"/")
+			
+			iprint (DEBUG.PRINT, current_directory)
+
+			iprint (DEBUG.PRINT, "\n|\t\tDIRECTORIES\r\t\t\t\t\t|\t\tDIRECTORY")
+			for file in all_files:
+				if os.path.isdir(file):
+					iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
+					
+			iprint (DEBUG.PRINT, "\n|\t\tFILE\r\t\t\t\t\t|\t\tDIRECTORY")
+			for file in all_files:
+				if os.path.isfile(file):
+					iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
+					
+
+
+
+		else: 
+			iprint(DEBUG.PRINT, "With web platform create a new file of project and begin")
+		# print (all_data)
+
+
+
+	def selected_text(self, owner_id, permissions):
 		#TODO: selected_text
 		iprint (DEBUG.PRINT, "something")
 
-	def read_current_directory():
+	def read_current_directory(self):
 		#TODO: read_current_directory
 		iprint (DEBUG.PRINT, "something")
 
-	def change_permissions(permissions):
+	def change_permissions(self, permissions):
 		#TODO: change_permissions
 		iprint (DEBUG.PRINT, "something")
 
-	def show_project_id():
+	def show_project_id(self):
 		#TODO: show_project_id
 		iprint (DEBUG.PRINT, "something")
 
-	def add_collaborator(user):
+	def add_collaborator(self, user):
 		#TODO: add_collaborator
 		iprint (DEBUG.PRINT, "something")
 
-	def file_to_project(file):
+	def file_to_project(self, file):
 		#TODO: file_to_project
 		iprint (DEBUG.PRINT, "something")
 
@@ -60,7 +89,7 @@ class ProjectController:
 def project_to_json(project):
 
 	""" Change project created on classes to JSON to be saved 
-		-> Return a jason with all elements of project
+		-> Return a json with all elements of project
 	"""
 	
 	

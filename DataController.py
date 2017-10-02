@@ -55,8 +55,9 @@ def create_random_link():
 
 	iprint (DEBUG.PRINT, "something")
 
-def save_project(data):
+def update_project(data):
 	""" SAVE PROJECT """
+	""" UPDATE PROJECT """
 
 	iprint(DEBUG.WARNING, "SAVING DATA: "+ str(len(data)) +" projects")
 	# iprint(DEBUG.PRINT, "DATA: "+str(data))
@@ -140,18 +141,15 @@ def return_project(project_id):
 		iprint(DEBUG.ERROR, "[return_project]: Throw errors, exception: "+ str(e))
 
 
-def update_project(project_id, data):
-	#TODO: update_project
-	iprint (DEBUG.PRINT, "something")
-
-def set_permissions(project_id, permissions):
-	#TODO: set_permissions
-	iprint (DEBUG.PRINT, "something")
-
 def return_collaborators(project_id):
-	#TODO: return_collaborators
-	iprint (DEBUG.PRINT, "something")
-
+	""" RETURN THE COLLABORATORS OF A PROJECT IF IT HAVE 
+		-> Return a dict with all collaborators of project
+	"""
+	try:
+		iprint (DEBUG.WARNING, "REQUEST OF COLLABORATORS ("+str(project_id)+")")
+		return db.child(project_id).child("users").get()
+	except Exception as e:
+		iprint(DEBUG.ERROR, "[return_project]: Throw errors, exception: "+ str(e))
 
 
 

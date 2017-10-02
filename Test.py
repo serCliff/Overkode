@@ -21,7 +21,7 @@ def test_data():
 	
 	project = list()
 
-	for i in xrange(1, randint(2, 5)):
+	for i in range(1, randint(2, 5)):
 		num_files = randint(2, 5)
 		num_users = randint(1, 5)
 		
