@@ -36,40 +36,40 @@ class Project:
 		self.files = files
 		self.users = users
 
-	## SAMPLE CREATOR ##
-	def __init__(self, project_id, owner, num_files, num_users):
+	# ## SAMPLE CREATOR ##
+	# def __init__(self, project_id, owner, num_files, num_users):
 		
-		self.project_id = project_id
-		self.permissions = randint(1, 4)
-		self.link = "http://sergiodelcastillo.com/"+project_id
-		self.owner_id = str(hashlib.md5(str(owner)).hexdigest())
-		self.files = dict()
-		self.users = dict()
+	# 	self.project_id = project_id
+	# 	self.permissions = randint(1, 4)
+	# 	self.link = "http://sergiodelcastillo.com/"+project_id
+	# 	self.owner_id = str(hashlib.md5(str(owner).encode('utf-8')).hexdigest())
+	# 	self.files = dict()
+	# 	self.users = dict()
 		
-		u = User(self.owner_id, owner, "sublime")
-		self.users[self.owner_id] = u
+	# 	u = User(self.owner_id, owner, "sublime")
+	# 	self.users[self.owner_id] = u
 
-		for user in range(1, num_users):
-			user_id = hashlib.md5(str(user)).hexdigest()
-			user = "sercliff_"+str(user)
-			u = User(user_id, user, "sublime")
-			self.users[user_id] = u
+	# 	for user in range(1, num_users):
+	# 		user_id = hashlib.md5(str(user).encode('utf-8')).hexdigest()
+	# 		user = "sercliff_"+str(user)
+	# 		u = User(user_id, user, "sublime")
+	# 		self.users[user_id] = u
 
-		for file in range(1, num_files):
-			data = dict()
+	# 	for file in range(1, num_files):
+	# 		data = dict()
 
-			for row in range(1,20):
-				text = hashlib.sha384(str(row*file)).hexdigest()
-				permissions = randint(1, 3)
-				timestamp = "00/00/0000"
-				r = RowInfo(text,permissions,timestamp)
-				data[row] = r
+	# 		for row in range(1,20):
+	# 			text = hashlib.sha384(str(row*file).encode('utf-8')).hexdigest()
+	# 			permissions = randint(1, 3)
+	# 			timestamp = "00/00/0000"
+	# 			r = RowInfo(text,permissions,timestamp)
+	# 			data[row] = r
 
-			name = str(hashlib.md5(str(file)).hexdigest())+".py"
-			path = "/path/"+name
-			permissions = randint(1, 4)
-			f = Files(name, path, permissions, data)
-			self.files[name] = f
+	# 		name = str(hashlib.md5(str(file).encode('utf-8')).hexdigest())+".py"
+	# 		path = "/path/"+name
+	# 		permissions = randint(1, 4)
+	# 		f = Files(name, path, permissions, data)
+	# 		self.files[name] = f
 
 	def get_project_id(self):
 		return self.project_id

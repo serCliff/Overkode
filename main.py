@@ -37,17 +37,16 @@ def main():
 
 
 	# ## MAKE RANDOM DATA
-	# data = ProjectController.project_to_json(Test.test_data())
-	# ## decode the data
-	# decoded = json.loads(data)
- 	# ## Save random data
-	# DataController.update_project(decoded)
+	# for project in Test.test_data():
+	# 	data = ProjectController.project_to_json(project)
+	# 	DataController.update_project(data)
+
 
 
 	# ## TEST SAVE DIFFERENT DATA
 	# data = json.loads(json.dumps({"permissions": 2,"text": "Primera linea editada y comprobada","timestamp": "00/00/0000"}))
 	# DataController.set_file_data("2994bf18db049b860b87943cd21b978c", "c672c18b046f9c4be7f33e39f62bb942", "1", data)
-	# for i in range(0,5):
+	# for i in range(0,100):
 	# 	data = json.loads(json.dumps({"permissions": 2,"text": "Primera linea editada y comprobada "+str(i)+" veces","timestamp": "00/00/0000"}))
 	# 	DataController.set_file_data("2994bf18db049b860b87943cd21b978c", "c672c18b046f9c4be7f33e39f62bb942", "1", data)
 
@@ -63,25 +62,35 @@ def main():
 	# data = json.loads(json.dumps({"2994bf18db049b860b87943cd21b978c": {"file_data": {"c672c18b046f9c4be7f33e39f62bb942": {"20": {"permissions": 1,"text": "TEST UPDATE DATA","timestamp": "00/00/0000"}}}}}))
 	# DataController.update_project(data)
 
-	# ## TEST TO LIST CONTENT OF DIRECTORY
-	owner_id = "data"
-	collaborators = "data"
-	project_id = "data"
+	## TEST CREATING NEW PROJECT
+	owner_id = "sercliff_id"
+	link = "htt://sergiodelcastillo.com/"+owner_id
+	project_id = "pruebaProyecto"
 	data = "data"
-	platform = "data"
+	platform = "sublime"	
+	scope = dict()
+	# scope['range'] = "project"
+	scope['range'] = "file"
+	scope['path'] = "/home/sergiodebian/Overkode/Test.py"
 
-	pc = pr.ProjectController(owner_id, collaborators, project_id, data, platform)
-	# pc.new_project(owner_id, platform)
+	permissions = Project.Project_Permissions.FULL
 
-	## TEST create_project_rowInfo()
-	permissions = dict()
-	for i in range(80, 101):
-		permissions[i] = Project.Permissions.WRITE.value
+	collaborators = dict()
+	collaborators[owner_id] = Project.User(owner_id, "sercliff", platform)
+	pro = pr.ProjectController(owner_id, collaborators, project_id, link, platform)
 
-	value = pc.create_project_rowInfo("/home/sergiodebian/Overkode/Test.py", permissions)
+	pro.new_project(scope, permissions)
+
+
+	# ## TEST create_project_rowInfo()
+	# permissions = dict()
+	# for i in range(80, 101):
+	# 	permissions[i] = Project.Permissions.WRITE.value
+
+	# value = pc.create_project_rowInfo("/home/sergiodebian/Overkode/Test.py", permissions)
 	
-	for row, rowinfo in value.items():
-		print("["+str(row) + " : "+str(rowinfo.permissions)+"] " + str(rowinfo.text))
+	# for row, rowinfo in value.items():
+	# 	print("["+str(row) + " : "+str(rowinfo.permissions)+"] " + str(rowinfo.text))
 
 	# ## STREAM
 	# my_stream = db.child("2994bf18db049b860b87943cd21b978c").stream(stream_handler)

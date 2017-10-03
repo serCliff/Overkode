@@ -96,7 +96,7 @@ def set_files(project_id, files):
 	""" Save Files Info of Project """
 	global db
 	try:
-		db.child(project_id).child("files").child(hashlib.md5(str(files['name'])).hexdigest()).set(files)
+		db.child(project_id).child("files").child(hashlib.md5(str(files['name']).encode('utf-8')).hexdigest()).set(files)
 	except Exception as e:
 		iprint(DEBUG.ERROR, "[set_files]: Throw errors, exception: "+ str(e))
 

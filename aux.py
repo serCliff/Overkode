@@ -6,6 +6,7 @@
 
 import auth
 import pyrebase
+
 from enum import Enum
 from random import randint
 import hashlib

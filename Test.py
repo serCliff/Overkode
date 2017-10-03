@@ -18,6 +18,7 @@ from aux import set_log as log
 
 
 def test_data():
+	iprint (DEBUG.PRINT, "\nMAKE RANDOM PROJECT DATA\n------------------")
 	
 	project = list()
 
@@ -25,10 +26,9 @@ def test_data():
 		num_files = randint(2, 5)
 		num_users = randint(1, 5)
 		
-		p = pro.Project(hashlib.md5(str(i*randint(5, 19999999999999))).hexdigest(), "sercliff", num_files, num_users)
+		p = pro.Project(hashlib.md5(str(i*randint(5, 19999999999999)).encode('utf-8')).hexdigest(), "sercliff", num_files, num_users)
 		project.append(p)
 
-	iprint (DEBUG.PRINT, "\nMAKE RANDOM PROJECT DATA\n------------------")
 
 	for p in project:
 		iprint (DEBUG.PRINT, "Project_id: "+str(p.get_project_id()))
