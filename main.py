@@ -65,12 +65,12 @@ def main():
 	## TEST CREATING NEW PROJECT
 	owner_id = "sercliff_id"
 	link = "htt://sergiodelcastillo.com/"+owner_id
-	project_id = "pruebaProyecto"
+	project_id = "pruebaProyectoCompleto"
 	data = "data"
 	platform = "sublime"	
 	scope = dict()
-	# scope['range'] = "project"
-	scope['range'] = "file"
+	scope['range'] = "project"
+	# scope['range'] = "file"
 	scope['path'] = "/home/sergiodebian/Overkode/Test.py"
 
 	permissions = Project.Project_Permissions.FULL

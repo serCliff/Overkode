@@ -52,6 +52,7 @@ class ProjectController:
 		if self.platform != "web":
 
 			if 'range' in scope and scope['range'] == "project": ## We are sharing all our project
+				## MAKING FULL PROJECT WITH ALL PROJECT	
 				#FUTURE: Para que solo algún archivo del proyecto se pueda editar y el resto visualizar, utilizar el método selected_text()
 
 				all_files = glob.glob(current_directory+'**', recursive=True) ## This version return an iterator, glob.glob returns a list 
@@ -59,33 +60,44 @@ class ProjectController:
 				
 				iprint (DEBUG.PRINT, current_directory)
 
-				iprint (DEBUG.PRINT, "\n|\t\tDIRECTORIES\r\t\t\t\t\t|\t\tDIRECTORY")
-				for file in all_files:
-					if os.path.isdir(file):
-						iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
+				# iprint (DEBUG.PRINT, "\n|\t\tDIRECTORIES\r\t\t\t\t\t|\t\tDIRECTORY")
+				# for file in all_files:
+				# 	if os.path.isdir(file):
+				# 		iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
 
-				iprint (DEBUG.PRINT, "\n|\t\tFILE\r\t\t\t\t\t|\t\tDIRECTORY")
+				# iprint (DEBUG.PRINT, "\n|\t\tFILE\r\t\t\t\t\t|\t\tDIRECTORY")
+				files = dict()
 				for file in all_files:
 					if os.path.isfile(file):
 						iprint (DEBUG.PRINT, "| "+os.path.basename(file)+"\r\t\t\t\t\t| "+file.replace(current_directory, "/"))
 
+						name = str(os.path.basename(file))
+						path = file.replace(current_directory, "/")
+						
+						iprint (DEBUG.PRINT, "| "+name+"\r\t\t\t\t\t| "+path)
+						row_info = create_project_rowInfo(file, general_permissions) ## GENERAL PERMISSIONS EXPLAINED ON THE METHOD
+						file = create_project_files(name, path, permissions.value, row_info)
+						files[name] = file
+				project = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
+				dc.update_project(project_to_json(project))
+
+
 			elif 'range' in scope and scope['range'] == "file": ## Only we will share the file with name is in scope['path']
+				## MAKING FULL PROJECT WITH ONE FILE
 				file = scope['path']
 				name = str(os.path.basename(file))
 				path = file.replace(current_directory, "/")
 				
 				iprint (DEBUG.PRINT, "| "+name+"\r\t\t\t\t\t| "+path)
-				## MAKING FULL PROJECT WITH ONE FILE
 				row_info = create_project_rowInfo(file, general_permissions)
 				file = create_project_files(name, path, permissions.value, row_info)
 				files = dict()
 				files[name] = file
 
-
 				project = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
 				dc.update_project(project_to_json(project))
 				#TODO: CREAR SISTEMA DE ACTUALIZACIONES, asignar el nuevo proyecto creado y subirlo a la base de datos
-
+				#TODO: CREAR SISTEMA DE SOPORTE PARA ARCHIVOS BINARIOS, FOTOGRAFÍAS, ETC
 
 
 		else: 
@@ -110,7 +122,7 @@ def create_project_rowInfo(file_path, permissions):
 	""" 
 		Make a RowInfo class with the information content in the file 
 		file_path   : The path of file that will be readed
-		permissions : dict[row, permission] with special permissions (if is empty all rows have Permissions.WRITE) | 'general' to assign manually general permissions
+		permissions : dict[row, permission] with special permissions (if is empty all rows have Permissions.WRITE) || 'general' to assign manually general permissions
 		-> Return   : dict[row, RowInfo] filled with the file_path information
 	"""
 	iprint (DEBUG.WARNING, "CREATING PROJECT RowInfo to: "+str(file_path))
@@ -126,25 +138,33 @@ def create_project_rowInfo(file_path, permissions):
 		else:
 			row_permissions = Project.Permissions.WRITE.value
 		
-		with open(file_path) as file:
-			row=1
-			for line in file:
-				row_info[row] = Project.RowInfo(line, row_permissions, timestamp)
-				row+=1
-		
 		try:
-			if not 'general' in permissions and len(permissions):
-				iprint(DEBUG.PRINT, "Rewrite rows with special permissions")
-				for row, permission in permissions.items():
-					row_info[row].set_permissions(permission)
+			with open(file_path) as file:
+				row=1
+				for line in file:
+					row_info[row] = Project.RowInfo(line, row_permissions, timestamp)
+					row+=1
+			try:
+				if not 'general' in permissions and len(permissions):
+					iprint(DEBUG.PRINT, "Rewrite rows with special permissions")
+					for row, permission in permissions.items():
+						row_info[row].set_permissions(permission)
 
-		except Exception as e:
-			iprint(DEBUG.ERROR, "[create_project_rowInfo] : Changing File Permissions was throwed an exception: "+str(e))
+			except Exception as e:
+				iprint(DEBUG.ERROR, "[create_project_rowInfo] : Changing File Permissions was thrown an exception: "+str(e))
+		
+		except Exception as e: 	##---------------> TO BINARY FILES	
+			iprint(DEBUG.WARNING, "---------------> THATS A BINARY FILE")
+			
+			# with open(file_path, "rb") as file:  
+			
+		
+		
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[create_project_rowInfo] : Reading File was throwed an exception: "+str(e))
+		iprint(DEBUG.ERROR, "[create_project_rowInfo] : Reading File was thrown an exception: "+str(e))
 
 
-	iprint(DEBUG.WARNING, "RowInfo was done")
+	iprint(DEBUG.WARNING, "RowInfo was done\n")
 
 	return row_info
 
