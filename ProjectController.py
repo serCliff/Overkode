@@ -10,11 +10,14 @@ import auth
 import pyrebase
 import time
 import json
-import Project
 import hashlib
 import os
 import glob
+import threading
+
+import Project
 import DataController as dc
+import UpdatesController
 
 from aux import iprint
 from aux import DEBUG
@@ -26,10 +29,14 @@ class ProjectController:
 
 	def __init__(self, owner_id, collaborators, project_id, link, platform):
 		self.owner_id = owner_id
-		self.collaborators = collaborators ## FUTURE: En colaboradores incluir en primer momento el owner(unico usuario e ir añadiendole el resto)
 		self.project_id = project_id
 		self.link = link
 		self.platform = platform
+		self.updates_controller = None
+
+		## FUTURE: En colaboradores incluir en primer momento el owner(unico usuario e ir añadiendole el resto)
+		## FUTURE: Collaborators solo sirve en caso de querer incluir varios usuarios desde un primer momento pero no tiene que ser una funcionalidad necesaria
+		self.collaborators = collaborators 
 
 	def new_project(self, scope, permissions):
 		""" 
@@ -39,6 +46,8 @@ class ProjectController:
 			
 			-> Return   : Link/id of the project 
 		"""
+
+		## TODO: Controlar gitignore
 		general_permissions = dict()
 
 		general_permissions['general'] = Project.Permissions.READ.value  ## By default the permissions of files will be READ
@@ -81,6 +90,11 @@ class ProjectController:
 				project = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
 				dc.update_project(project_to_json(project))
 
+				self.updates_controller = UpdatesController.UpdatesController(self.project_id, self.owner_id)
+				begin_updates(self.updates_controller)
+
+
+
 
 			elif 'range' in scope and scope['range'] == "file": ## Only we will share the file with name is in scope['path']
 				## MAKING FULL PROJECT WITH ONE FILE
@@ -96,17 +110,41 @@ class ProjectController:
 
 				project = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
 				dc.update_project(project_to_json(project))
-				#TODO: CREAR SISTEMA DE ACTUALIZACIONES, asignar el nuevo proyecto creado y subirlo a la base de datos
-				#TODO: CREAR SISTEMA DE SOPORTE PARA ARCHIVOS BINARIOS, FOTOGRAFÍAS, ETC
 
+				self.updates_controller = UpdatesController.UpdatesController(self.project_id, self.owner_id)
+				begin_updates(self.updates_controller)
+				
+				
+				#TODO: CREAR SISTEMA DE SOPORTE PARA ARCHIVOS BINARIOS, FOTOGRAFÍAS, ETC
 
 		else: 
 			iprint(DEBUG.PRINT, "With web platform create a new file of project and begin")
-		# print (all_data)
+			# TODO: CREAR LO NECESARIO PARA PLATAFORMA WEB
+
+		
+	def stop_streaming(self):
+		stop_updates(self.updates_controller)
 
 
 
+## ············································································································································ ##
 
+
+def begin_updates(updates_controller):
+
+	""" PROCESS TO MANAGE UPDATES TO A USER """
+	iprint(DEBUG.WARNING, "Starting streaming updates")
+	t = threading.Thread(target=updates_controller.receive_updates)
+	# t = threading.Thread(target=u.updates, args=("mugreee",))
+	t.start()
+
+
+def stop_updates(updates_controller):
+	""" FINISHING STREAMING UPDATES """
+	
+	iprint(DEBUG.WARNING, "Finishing updates")
+	updates_controller.stop_updates()
+	iprint(DEBUG.WARNING, "Finished")
 
 
 
@@ -170,12 +208,9 @@ def create_project_rowInfo(file_path, permissions):
 
 
 
+
 def selected_text(owner_id, permissions):
 	#TODO: selected_text
-	iprint (DEBUG.PRINT, "something")
-
-def read_current_directory():
-	#TODO: read_current_directory
 	iprint (DEBUG.PRINT, "something")
 
 def change_permissions(permissions):
@@ -186,13 +221,10 @@ def show_project_id():
 	#TODO: show_project_id
 	iprint (DEBUG.PRINT, "something")
 
-def add_collaborator(user):
+def add_collaborator(user_id, project_id):
 	#TODO: add_collaborator
 	iprint (DEBUG.PRINT, "something")
 
-def file_to_project(file):
-	#TODO: file_to_project
-	iprint (DEBUG.PRINT, "something")
 
 
 def project_to_json(project):
@@ -207,8 +239,6 @@ def project_to_json(project):
 	iprint (DEBUG.PRINT, "PARSE PROJECT TO JSON\n")
 
 	projects = dict()
-
-	# for p in project:
 
 
 	project_data = dict()

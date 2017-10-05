@@ -55,6 +55,12 @@ def create_random_link():
 
 	iprint (DEBUG.PRINT, "something")
 
+
+	print (db.generate_key())
+	
+
+
+
 def update_project(data):
 	""" SAVE PROJECT """
 	""" UPDATE PROJECT """
