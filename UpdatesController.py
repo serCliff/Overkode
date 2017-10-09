@@ -5,7 +5,6 @@
 
 
 
-
 import auth
 import pyrebase
 import time
@@ -32,7 +31,20 @@ db = firebase.database()
 
 def stream_handler(message):
 	#TODO: Crear un hilo por cada fichero editado recibido para mejorar el rendimiento
-	print(message)
+	# print(message)
+
+	# {'data': 21, 'path': '/file_data/01a06b801eb7962fc5be15ff8f1cd899/1/permissions', 'event': 'put'}
+	# PATH: /
+	# PATH: /users/blanca_id
+	# PATH: /files/b0c973dab27cdd30805a7dd6951af733/path
+	# PATH: /file_data/01a06b801eb7962fc5be15ff8f1cd899/18
+	# PATH: /file_data/01a06b801eb7962fc5be15ff8f1cd899/1/permissions
+
+	try:
+		print("PATH: "+ str(message["path"]))
+	except Exception as e:
+		a = 0
+
 	try:
 		print("TEXT: "+ str(message["data"]["text"]))
 	except Exception as e:
@@ -49,7 +61,6 @@ def stream_handler(message):
 class UpdatesController:
 
 	def __init__(self, project, user_id):
-		
 		self.project = project
 		self.user_id = user_id
 		self.stream = None
@@ -63,4 +74,12 @@ class UpdatesController:
 
 	def stop_updates(self):
 		self.stream.close()
+
+
+
+
+
+
+
+
 

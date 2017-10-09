@@ -9,7 +9,10 @@ import pyrebase
 from enum import Enum
 from random import randint
 import hashlib
-import aux
+
+from aux import iprint
+from aux import DEBUG
+from aux import set_log as log
 
 
 
@@ -70,6 +73,8 @@ class Project:
 	# 		permissions = randint(1, 4)
 	# 		f = Files(name, path, permissions, data)
 	# 		self.files[name] = f
+	def __del__(self):
+ 		iprint(DEBUG.PRINT, "PROJECT OBJECT DELETED")
 
 	def get_project_id(self):
 		return self.project_id
@@ -90,7 +95,10 @@ class Files:
 		self.path = path
 		self.permissions = permissions
 		self.data = data
-
+	
+	def __del__(self):
+ 		iprint(DEBUG.PRINT, "FILES OBJECT DELETED")
+ 		
 	def get_name(self):
 		return self.name
 	def get_path(self):
@@ -108,6 +116,9 @@ class RowInfo:
 		self.text = text
 		self.permissions = permissions
 		self.timestamp = timestamp
+	def __del__(self):
+ 		iprint(DEBUG.PRINT, "ROWINFO OBJECT DELETED")
+ 		
 
 	def get_text(self):
 		return self.text
@@ -123,6 +134,9 @@ class User:
 		self.user_id = user_id
 		self.name = name
 		self.platform = platform
+	def __del__(self):
+ 		iprint(DEBUG.PRINT, "USER OBJECT DELETED")
+ 		
 
 	def get_user_id(self):
 		return self.user_id

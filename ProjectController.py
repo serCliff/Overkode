@@ -86,12 +86,19 @@ class ProjectController:
 						iprint (DEBUG.PRINT, "| "+name+"\r\t\t\t\t\t| "+path)
 						row_info = create_project_rowInfo(file, general_permissions) ## GENERAL PERMISSIONS EXPLAINED ON THE METHOD
 						file = create_project_files(name, path, permissions.value, row_info)
-						files[name] = file
-				project = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
-				dc.update_project(project_to_json(project))
+						name_id = hashlib.md5(name.encode("utf-8")).hexdigest()
+						files[name_id] = file
+				
+				project = dict()
+				project[self.project_id] = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
+				# dc.update_project(project_to_json(project))
+				dc.update_project(json.loads(json.dumps(project)))
+				
 
 				self.updates_controller = UpdatesController.UpdatesController(self.project_id, self.owner_id)
 				begin_updates(self.updates_controller)
+
+
 
 
 
@@ -106,10 +113,14 @@ class ProjectController:
 				row_info = create_project_rowInfo(file, general_permissions)
 				file = create_project_files(name, path, permissions.value, row_info)
 				files = dict()
-				files[name] = file
+				name_id = hashlib.md5(name.encode("utf-8")).hexdigest()
+				files[name_id] = file
 
-				project = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
-				dc.update_project(project_to_json(project))
+				project = dict()
+				project[self.project_id] = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
+				# dc.update_project(project_to_json(project))
+				dc.update_project(json.loads(json.dumps(project)))
+
 
 				self.updates_controller = UpdatesController.UpdatesController(self.project_id, self.owner_id)
 				begin_updates(self.updates_controller)
@@ -129,6 +140,10 @@ class ProjectController:
 
 ## ············································································································································ ##
 
+def test_update(project_id, owner_id):
+	updates_controller = UpdatesController.UpdatesController(project_id, owner_id)
+	begin_updates(updates_controller)
+	
 
 def begin_updates(updates_controller):
 
@@ -149,12 +164,52 @@ def stop_updates(updates_controller):
 
 
 def create_project(project_id, link, permissions, owner_id, files, users):
-	return Project.Project(project_id, permissions, link, owner_id, files, users)
+
+	project = dict()
+	project_data = dict()
+	project_data["id"] = project_id
+	project_data["permissions"] = permissions
+	project_data["link"] = link
+	project_data["owner_id"] = owner_id
+	project["project"] = project_data
+
+	file_files = dict()
+	file_data = dict()
+	for key, data in files.items():
+		file_files[key] = data["files"]
+		file_data[key] = data["file_data"]
+
+	project["files"] = file_files
+	project["file_data"] = file_data
+
+	project["users"] = users
+	return project
+
+def create_user(user_id, name, platform):
+
+	user = dict()
+	user["user_id"] = user_id
+	user["name"] = name
+	user["platform"] = platform
+	return user
+	
+	
 
 
 def create_project_files(name, path, permissions, data):
+	# return Project.Files(name, path, permissions, data)
 	iprint (DEBUG.PRINT, "CREATING PROJECT FILE INFO")
-	return Project.Files(name, path, permissions, data)
+	project_files = dict()
+	project_data = dict()
+	project_data["name"] = name
+	project_data["path"] = path
+	project_data["permissions"] = permissions
+	
+	project_files["files"] = project_data
+	project_files["file_data"] = data
+	
+	return project_files
+
 
 def create_project_rowInfo(file_path, permissions):
 	""" 
@@ -166,6 +221,7 @@ def create_project_rowInfo(file_path, permissions):
 	iprint (DEBUG.WARNING, "CREATING PROJECT RowInfo to: "+str(file_path))
 
 	row_info = dict()
+	row_json = dict()
 	try:
 		timestamp = "00/00/0000"
 		
@@ -180,8 +236,23 @@ def create_project_rowInfo(file_path, permissions):
 			with open(file_path) as file:
 				row=1
 				for line in file:
-					row_info[row] = Project.RowInfo(line, row_permissions, timestamp)
+					rowinfo_json = dict()
+					rowinfo_json["text"] = line
+					rowinfo_json["permissions"] = row_permissions
+					rowinfo_json["timestamp"] = timestamp
+					row_json[row] = rowinfo_json
+					del rowinfo_json
 					row+=1
+
+					# row_info[row] = Project.RowInfo(line, row_permissions, timestamp)
+
+			# print("\nrow_json")
+			# print(row_json)
+			# print("\nrow_json[1]")
+			# print(row_json[1])
+			# print("\nrow_json[1][text]")
+			# print(row_json[80]["text"])
+
 			try:
 				if not 'general' in permissions and len(permissions):
 					iprint(DEBUG.PRINT, "Rewrite rows with special permissions")
@@ -189,22 +260,21 @@ def create_project_rowInfo(file_path, permissions):
 						row_info[row].set_permissions(permission)
 
 			except Exception as e:
-				iprint(DEBUG.ERROR, "[create_project_rowInfo] : Changing File Permissions was thrown an exception: "+str(e))
+				iprint(DEBUG.ERROR, "[ProjectController][create_project_rowInfo] : Changing File Permissions was thrown an exception: "+str(e))
 		
 		except Exception as e: 	##---------------> TO BINARY FILES	
+			#TODO: Mirar como solucionar el asunto para archivos que no son legibles
 			iprint(DEBUG.WARNING, "---------------> THATS A BINARY FILE")
-			
 			# with open(file_path, "rb") as file:  
-			
-		
 		
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[create_project_rowInfo] : Reading File was thrown an exception: "+str(e))
+		iprint(DEBUG.ERROR, "[ProjectController][create_project_rowInfo] : Reading File was thrown an exception: "+str(e))
 
 
 	iprint(DEBUG.WARNING, "RowInfo was done\n")
 
-	return row_info
+	return row_json
+	# return row_info
 
 
 
@@ -232,9 +302,7 @@ def project_to_json(project):
 	""" Change project created on classes to JSON to be saved 
 		-> Return a json with all elements of project
 	"""
-	
-	
-	#TODO: project_to_json
+
 	iprint (DEBUG.PRINT, "***************************")
 	iprint (DEBUG.PRINT, "PARSE PROJECT TO JSON\n")
 
@@ -264,6 +332,8 @@ def project_to_json(project):
 			file_data[name][row]["text"] = row_data.get_text()
 			file_data[name][row]["permissions"] = row_data.get_permissions()
 			file_data[name][row]["timestamp"] = row_data.get_timestamp()
+			del row_data
+		del file
 
 	users = dict()
 	for user_id, user in project.get_users().items():
@@ -271,6 +341,8 @@ def project_to_json(project):
 		users[user_id]["name"] = user.get_name()
 		users[user_id]["platform"] = user.get_platform()
 		users[user_id]["user_id"] = user.get_user_id()
+		del user
+	del project
 	# iprint (DEBUG.PRINT, "")
 
 	item = dict()

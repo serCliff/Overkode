@@ -12,7 +12,7 @@ import hashlib
 import Test
 import Project
 import ProjectController
-import ProjectController as pr
+import ProjectController as pc
 import DataController
 
 from aux import iprint
@@ -70,23 +70,23 @@ def main():
 
 	## TEST CREATING NEW PROJECT
 	owner_id = "sercliff_id"
-	link = "htt://sergiodelcastillo.com/"+owner_id
+	link = "http://sergiodelcastillo.com/"+owner_id
 	data = "data"
 	platform = "sublime"	
 	scope = dict()
 
-	# project_id = "pruebaProyecto"
+	# project_id = "pruebaProyecto2"
 	# scope['range'] = "file"
 
-	project_id = "pruebaProyectoCompleto"
+	project_id = "pruebaProyectoCompleto2"
 	scope['range'] = "project"
+	collaborators = dict()
+	collaborators[owner_id] = pc.create_user(owner_id, "sercliff", platform)
 
 	project_id = hashlib.md5(str(project_id).encode('utf-8')).hexdigest()
 	scope['path'] = "/home/sergiodebian/Overkode/Test.py"
 	permissions = Project.Project_Permissions.FULL
-	collaborators = dict()
-	collaborators[owner_id] = Project.User(owner_id, "sercliff", platform)
-	pro = pr.ProjectController(owner_id, collaborators, project_id, link, platform)
+	pro = pc.ProjectController(owner_id, collaborators, project_id, link, platform)
 	pro.new_project(scope, permissions)
 
 
@@ -99,9 +99,13 @@ def main():
 	# 	print("["+str(row) + " : "+str(rowinfo.permissions)+"] " + str(rowinfo.text))
 
 
-	# DataController.create_random_link()
+	# print(DataController.create_random_link("project name"))
 
 
+	# ## TEST UPDATES METHOD
+	# project_id = "d43b1f0a950d3ba0a72545954c2806f2"
+	# owner_id = "sercliff"
+	# pc.test_update(project_id, owner_id)
 
 
 

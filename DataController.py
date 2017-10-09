@@ -37,28 +37,25 @@ db = firebase.database()
 
 
 
-def create_random_link():
-	#TODO: create_random_link
+def create_random_link(value):
 	"""
 	Create Random Link: Returns a link avaiable to your project
-		return: new link of project 
-		
-		# 1 Crear un link
-		# 2 Comprobar que no existe ninguno igual
-		# 	2.1 Si existe uno igual, volver a paso 1
-		# 	2.2 Si el link es único continuar
-		# 3 Devolver link 
+	-> return: new link of project 
 
 	"""
 
 	global db
 
-	iprint (DEBUG.PRINT, "something")
+	iprint (DEBUG.WARNING, "CREATING RANDOM LINK with: "+str(value))
 
+	result = True
+	while result != None:
+		value = hashlib.md5(value.encode('utf-8')).hexdigest()
+		result = db.child(str(value)).get().val()
 
-	print (db.generate_key())
+	return value
+
 	
-
 
 
 def update_project(data):
@@ -67,9 +64,12 @@ def update_project(data):
 
 	iprint(DEBUG.WARNING, "SAVING DATA: "+ str(len(data)) +" projects")
 	# iprint(DEBUG.PRINT, "DATA: "+str(data))
-
+	#TODO: CREAR THREAD POOL PARA SUBIR TODOS LOS PROYECTOS MÁS RÁPIDO
 	for project_id, project in data.items():
+
 		
+		iprint(DEBUG.WARNING, "SAVING DATA: "+ str(project_id)  +" project "+str(project))
+
 		if 'project' in project:
 			set_project_info(project_id, project['project'])
 
