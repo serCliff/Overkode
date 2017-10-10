@@ -18,6 +18,7 @@ import threading
 
 import DataController as dc
 
+from aux import d2j
 from aux import iprint
 from aux import DEBUG
 from aux import set_log as log
@@ -31,31 +32,34 @@ db = firebase.database()
 
 def stream_handler(message):
 	#TODO: Crear un hilo por cada fichero editado recibido para mejorar el rendimiento
-	# print(message)
-
-	# {'data': 21, 'path': '/file_data/01a06b801eb7962fc5be15ff8f1cd899/1/permissions', 'event': 'put'}
-	# PATH: /
-	# PATH: /users/blanca_id
-	# PATH: /files/b0c973dab27cdd30805a7dd6951af733/path
-	# PATH: /file_data/01a06b801eb7962fc5be15ff8f1cd899/18
-	# PATH: /file_data/01a06b801eb7962fc5be15ff8f1cd899/1/permissions
-
+	#TODO: Evitar actualizaciones que realice el propio usuario
+	
+	project_id = str(message["stream_id"])
 	try:
-		print("PATH: "+ str(message["path"]))
-	except Exception as e:
-		a = 0
+		update = dict()
+		update[project_id] = recursive_structure(str(message["path"]), message["data"])
+		print(update)
+		#TODO: Crear sistema para representar la información en el editor
 
-	try:
-		print("TEXT: "+ str(message["data"]["text"]))
-	except Exception as e:
-		a = 0
-	try:
-		print("TIMESTAMP: "+ str(message["data"]["timestamp"]))	
 	except Exception as e:
 		a = 0
 	
 
+def recursive_structure(path_data, data):
+	""" Make recursively the project data """
+	
+	key = os.path.basename(path_data)
+	
+	new_data = dict()
+	new_data[key] = data
 
+	new_path = path_data.replace("/"+str(key), "")
+	
+	if new_path == "" or path_data == "/":
+		return new_data
+	else:
+		return recursive_structure(new_path, new_data)
+	
 
 
 class UpdatesController:
@@ -70,7 +74,7 @@ class UpdatesController:
 		global db
 
 		print("thread working in stream: "+str(self.project)+" and user_id: "+str(self.user_id))
-		self.stream = db.child(self.project).stream(stream_handler)
+		self.stream = db.child(self.project).stream(stream_handler, stream_id=self.project)
 
 	def stop_updates(self):
 		self.stream.close()

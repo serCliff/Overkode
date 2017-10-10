@@ -6,6 +6,7 @@
 
 import auth
 import pyrebase
+import json
 
 from enum import Enum
 from random import randint
@@ -63,3 +64,8 @@ def decode(text):
 def set_log(value):
 	global log
 	log = value
+
+
+def d2j(data):
+	""" Convert dictionary and lists data to JSON """
+	return json.loads(json.dumps(data))

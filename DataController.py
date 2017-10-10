@@ -25,6 +25,8 @@ import auth
 import pyrebase
 import time
 import hashlib
+
+from aux import d2j
 from aux import iprint
 from aux import DEBUG
 from aux import set_log as log
@@ -83,8 +85,18 @@ def update_project(data):
 			
 		if 'file_data' in project:
 			for file_name, file_data in project['file_data'].items():
-				for row, info in file_data.items():
-					set_file_data(project_id, file_name, row, info)
+				try:
+					iprint(DEBUG.WARNING, "TRYING SAVE DATA AS DICT")
+					for row, info in file_data.items():
+						set_file_data(project_id, file_name, row, info)
+				except Exception as e:
+					iprint(DEBUG.WARNING, "DATA NOT SAVED AS DICT --> exception: "+str(e))
+					iprint(DEBUG.WARNING, "TRYING SAVE DATA AS LIST")
+					row = 0
+					for info in file_data:
+						if info != None:
+							set_file_data(project_id, file_name, row, info)
+						row+=1
 		
 	iprint(DEBUG.WARNING, "SAVED")
 
@@ -95,7 +107,7 @@ def set_project_info(project_id, project):
 	try:
 		db.child(project_id).child("project").set(project)
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[set_project_info]: Throw errors, exception: "+ str(e))
+		iprint(DEBUG.ERROR, "[DataController][set_project_info]: Throw errors, exception: "+ str(e))
 
 
 def set_files(project_id, files):
@@ -104,7 +116,7 @@ def set_files(project_id, files):
 	try:
 		db.child(project_id).child("files").child(hashlib.md5(str(files['name']).encode('utf-8')).hexdigest()).set(files)
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[set_files]: Throw errors, exception: "+ str(e))
+		iprint(DEBUG.ERROR, "[DataController][set_files]: Throw errors, exception: "+ str(e))
 
 
 def set_file_data(project_id, file_name, row, row_data):
@@ -113,7 +125,7 @@ def set_file_data(project_id, file_name, row, row_data):
 	try:
 		db.child(project_id).child("file_data").child(str(file_name)).child(row).update(row_data)
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[set_file_data]: Throw errors, exception: "+ str(e))
+		iprint(DEBUG.ERROR, "[DataController][set_file_data]: Throw errors, exception: "+ str(e))
 
 
 def set_collaborator(project_id, user_data):
@@ -122,7 +134,7 @@ def set_collaborator(project_id, user_data):
 	try:
 		db.child(project_id).child("users").child(user_data['user_id']).set(user_data)
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[set_collaborator]: Throw errors, exception: "+ str(e))
+		iprint(DEBUG.ERROR, "[DataController][set_collaborator]: Throw errors, exception: "+ str(e))
 
 
 def delete_project(project_id):
@@ -133,7 +145,7 @@ def delete_project(project_id):
 		db.remove(project_id)
 		iprint (DEBUG.WARNING, "REMOVED")
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[set_collaborator]: Throw errors, exception: "+ str(e))
+		iprint(DEBUG.ERROR, "[DataController][set_collaborator]: Throw errors, exception: "+ str(e))
 
 
 def return_project(project_id):
@@ -144,7 +156,7 @@ def return_project(project_id):
 		iprint (DEBUG.WARNING, "REQUEST OF PROJECT ("+str(project_id)+")")
 		return db.child(project_id).get()
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[return_project]: Throw errors, exception: "+ str(e))
+		iprint(DEBUG.ERROR, "[DataController][return_project]: Throw errors, exception: "+ str(e))
 
 
 def return_collaborators(project_id):
@@ -155,7 +167,7 @@ def return_collaborators(project_id):
 		iprint (DEBUG.WARNING, "REQUEST OF COLLABORATORS ("+str(project_id)+")")
 		return db.child(project_id).child("users").get()
 	except Exception as e:
-		iprint(DEBUG.ERROR, "[return_project]: Throw errors, exception: "+ str(e))
+		iprint(DEBUG.ERROR, "[DataController][return_project]: Throw errors, exception: "+ str(e))
 
 
 

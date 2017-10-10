@@ -19,6 +19,7 @@ import Project
 import DataController as dc
 import UpdatesController
 
+from aux import d2j
 from aux import iprint
 from aux import DEBUG
 from aux import set_log as log
@@ -92,7 +93,7 @@ class ProjectController:
 				project = dict()
 				project[self.project_id] = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
 				# dc.update_project(project_to_json(project))
-				dc.update_project(json.loads(json.dumps(project)))
+				dc.update_project(d2j(project))
 				
 
 				self.updates_controller = UpdatesController.UpdatesController(self.project_id, self.owner_id)
@@ -119,7 +120,7 @@ class ProjectController:
 				project = dict()
 				project[self.project_id] = create_project(self.project_id, self.link, permissions.value, self.owner_id, files, self.collaborators)
 				# dc.update_project(project_to_json(project))
-				dc.update_project(json.loads(json.dumps(project)))
+				dc.update_project(d2j(project))
 
 
 				self.updates_controller = UpdatesController.UpdatesController(self.project_id, self.owner_id)
@@ -132,13 +133,35 @@ class ProjectController:
 			iprint(DEBUG.PRINT, "With web platform create a new file of project and begin")
 			# TODO: CREAR LO NECESARIO PARA PLATAFORMA WEB
 
-		
+	def add_collaborator(user_id, project_id):
+		#TODO: add_collaborator
+		iprint (DEBUG.PRINT, "NEW COLLABORATOR")
+		self.updates_controller = UpdatesController.UpdatesController(self.project_id, self.owner_id)
+		begin_updates(self.updates_controller)
+
+	def show_project_id(self):
+		#TODO: show_project_id, crear método que represente esta información en el plugin
+		return self.link
+
 	def stop_streaming(self):
 		stop_updates(self.updates_controller)
 
 
+	def selected_text(self, owner_id, permissions):
+		#TODO: selected_text
+		iprint (DEBUG.PRINT, "something")
+
+	def change_permissions(self, permissions):
+		#TODO: change_permissions
+		""" Mostrar permisos, decir a que pueden cambiar y cambiar """
+		iprint (DEBUG.PRINT, "something")
+
+
+
+
 
 ## ············································································································································ ##
+
 
 def test_update(project_id, owner_id):
 	updates_controller = UpdatesController.UpdatesController(project_id, owner_id)
@@ -264,6 +287,7 @@ def create_project_rowInfo(file_path, permissions):
 		
 		except Exception as e: 	##---------------> TO BINARY FILES	
 			#TODO: Mirar como solucionar el asunto para archivos que no son legibles
+			#TODO: Evitar almacenar información de archivos de los que no tenemos datos almacenados
 			iprint(DEBUG.WARNING, "---------------> THATS A BINARY FILE")
 			# with open(file_path, "rb") as file:  
 		
@@ -279,21 +303,8 @@ def create_project_rowInfo(file_path, permissions):
 
 
 
-def selected_text(owner_id, permissions):
-	#TODO: selected_text
-	iprint (DEBUG.PRINT, "something")
 
-def change_permissions(permissions):
-	#TODO: change_permissions
-	iprint (DEBUG.PRINT, "something")
 
-def show_project_id():
-	#TODO: show_project_id
-	iprint (DEBUG.PRINT, "something")
-
-def add_collaborator(user_id, project_id):
-	#TODO: add_collaborator
-	iprint (DEBUG.PRINT, "something")
 
 
 
